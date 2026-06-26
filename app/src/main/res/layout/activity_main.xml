@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg">
+
+    <!-- Camera Preview fills the top portion -->
+    <TextureView
+        android:id="@+id/textureView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/controlsPanel"
+        app:layout_constraintDimensionRatio="H,3:4"
+        android:alpha="0.01"/>
+
+    <ImageView
+        android:id="@+id/pixelatedOverlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintTop_toTopOf="@id/textureView"
+        app:layout_constraintBottom_toBottomOf="@id/textureView"
+        app:layout_constraintStart_toStartOf="@id/textureView"
+        app:layout_constraintEnd_toEndOf="@id/textureView"/>
+
+    <!-- Glitch overlay label -->
+    <TextView
+        android:id="@+id/resLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="4×3"
+        android:textColor="@color/accent"
+        android:textSize="11sp"
+        android:fontFamily="monospace"
+        android:background="#AA000000"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="2dp"
+        app:layout_constraintTop_toTopOf="@id/textureView"
+        app:layout_constraintStart_toStartOf="@id/textureView"
+        android:layout_margin="8dp"/>
+
+    <!-- REC indicator -->
+    <TextView
+        android:id="@+id/recIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="● REC"
+        android:textColor="@color/rec_red"
+        android:textSize="12sp"
+        android:fontFamily="monospace"
+        android:background="#AA000000"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="2dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/textureView"
+        app:layout_constraintEnd_toEndOf="@id/textureView"
+        android:layout_margin="8dp"/>
+
+    <!-- Controls panel at the bottom -->
+    <LinearLayout
+        android:id="@+id/controlsPanel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/surface"
+        android:paddingTop="12dp"
+        android:paddingBottom="16dp"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Video resolution row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="VIDEO RES"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp"
+                android:fontFamily="monospace"/>
+
+            <TextView
+                android:id="@+id/videoResValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4×3"
+                android:textColor="@color/accent"
+                android:textSize="12sp"
+                android:fontFamily="monospace"
+                android:minWidth="80dp"
+                android:gravity="center"/>
+
+            <SeekBar
+                android:id="@+id/videoResSeek"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:max="5"
+                android:progress="0"
+                android:progressTint="@color/accent"
+                android:thumbTint="@color/accent"/>
+        </LinearLayout>
+
+        <!-- Audio quality row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="AUDIO"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp"
+                android:fontFamily="monospace"/>
+
+            <TextView
+                android:id="@+id/audioQualityValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="200 Hz"
+                android:textColor="@color/accent"
+                android:textSize="12sp"
+                android:fontFamily="monospace"
+                android:minWidth="80dp"
+                android:gravity="center"/>
+
+            <SeekBar
+                android:id="@+id/audioQualitySeek"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:max="5"
+                android:progress="0"
+                android:progressTint="@color/accent"
+                android:thumbTint="@color/accent"/>
+        </LinearLayout>
+
+        <!-- Photo quality row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="PHOTO RES"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp"
+                android:fontFamily="monospace"/>
+
+            <TextView
+                android:id="@+id/photoResValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4×4"
+                android:textColor="@color/accent"
+                android:textSize="12sp"
+                android:fontFamily="monospace"
+                android:minWidth="80dp"
+                android:gravity="center"/>
+
+            <SeekBar
+                android:id="@+id/photoResSeek"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:max="5"
+                android:progress="0"
+                android:progressTint="@color/accent"
+                android:thumbTint="@color/accent"/>
+        </LinearLayout>
+
+        <!-- Frame drop row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="16dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="FRAME DROP"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp"
+                android:fontFamily="monospace"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFrameDrop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OFF"
+                android:textSize="10sp"
+                android:fontFamily="monospace"
+                android:textColor="@color/text_secondary"
+                android:backgroundTint="@color/surface"
+                android:strokeColor="@color/text_secondary"
+                app:strokeWidth="1dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:minHeight="32dp"
+                android:padding="0dp"
+                android:layout_marginEnd="12dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CAM"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp"
+                android:fontFamily="monospace"
+                android:layout_marginEnd="8dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSwitchCam"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="REAR"
+                android:textSize="10sp"
+                android:fontFamily="monospace"
+                android:textColor="@color/accent"
+                android:backgroundTint="@color/surface"
+                android:strokeColor="@color/accent"
+                app:strokeWidth="1dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:minHeight="32dp"
+                android:padding="0dp"/>
+        </LinearLayout>
+
+        <!-- Buttons row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnFolder"
+                android:layout_width="48dp"
+                android:layout_height="56dp"
+                android:layout_marginEnd="8dp"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="0dp"
+                app:icon="@android:drawable/ic_menu_save"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                android:backgroundTint="@color/surface"
+                android:strokeColor="@color/accent"
+                app:strokeWidth="1dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+            <!-- Photo button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPhoto"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="PHOTO"
+                android:textSize="12sp"
+                android:fontFamily="monospace"
+                android:backgroundTint="@color/surface"
+                android:strokeColor="@color/accent"
+                app:strokeWidth="1dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+
+            <!-- Record button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRecord"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:text="● REC"
+                android:textSize="12sp"
+                android:fontFamily="monospace"
+                android:backgroundTint="@color/rec_red"
+                style="@style/Widget.MaterialComponents.Button"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

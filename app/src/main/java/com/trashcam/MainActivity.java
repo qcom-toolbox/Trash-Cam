@@ -468,17 +468,10 @@ public class MainActivity extends AppCompatActivity {
         File tempFile = null;
 
         try {
-            if (savedUriStr != null) {
-                DocumentFile root = DocumentFile.fromTreeUri(this, Uri.parse(savedUriStr));
-                DocumentFile file = root.createFile("video/mp4", filename);
-                // MediaMuxer needs a file path or FileDescriptor. SAF gives us a Uri.
-                // We'll record to a temp file and then copy it to the SAF Uri.
-                tempFile = new File(getExternalCacheDir(), "temp_vid.mp4");
-            } else {
-                File outDir = new File(getExternalFilesDir(null), "TrashCam");
-                outDir.mkdirs();
-                tempFile = new File(outDir, filename);
-            }
+            // MediaMuxer needs a file path or FileDescriptor, but both SAF and MediaStore
+            // only give us a Uri — record to a temp file first, then copy it to the
+            // final destination once recording is complete.
+            tempFile = new File(getExternalCacheDir(), "temp_vid.mp4");
 
             final File finalMuxFile = tempFile;
             MediaMuxer muxer = new MediaMuxer(finalMuxFile.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
@@ -631,7 +624,8 @@ public class MainActivity extends AppCompatActivity {
             if (muxerStarted) muxer.stop();
             muxer.release();
 
-            // Copy to final destination if using SAF
+            // Copy to final destination
+            String location;
             if (savedUriStr != null) {
                 DocumentFile root = DocumentFile.fromTreeUri(this, Uri.parse(savedUriStr));
                 DocumentFile finalFile = root.createFile("video/mp4", filename);
@@ -641,11 +635,27 @@ public class MainActivity extends AppCompatActivity {
                     int len;
                     while ((len = in.read(b)) > 0) out.write(b, 0, len);
                 }
-                tempFile.delete();
+                location = "Custom Folder";
+            } else {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Video.Media.DISPLAY_NAME, filename);
+                values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
+                values.put(MediaStore.Video.Media.RELATIVE_PATH, "DCIM/TrashCam");
+                Uri videoUri = getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
+                try (InputStream in = new FileInputStream(tempFile);
+                     OutputStream out = getContentResolver().openOutputStream(videoUri)) {
+                    byte[] b = new byte[8192];
+                    int len;
+                    while ((len = in.read(b)) > 0) out.write(b, 0, len);
+                }
+                location = "Gallery (DCIM/TrashCam)";
             }
+            tempFile.delete();
 
             final int fc = frameCount;
-            runOnUiThread(() -> Toast.makeText(this, "Saved " + fc + " frame trash video!", Toast.LENGTH_SHORT).show());
+            final String loc = location;
+            runOnUiThread(() -> Toast.makeText(this,
+                "Saved " + fc + " frame trash video to " + loc + " 🗑️", Toast.LENGTH_SHORT).show());
 
         } catch (Exception e) {
             Log.e(TAG, "Recording error", e);

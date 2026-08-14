@@ -34,3 +34,5 @@ google-services.json
 
 .DS_Store
 keystore.properties
+app/release/app-release.aab
+app/release/app-release.aab

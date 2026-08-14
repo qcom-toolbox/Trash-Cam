@@ -286,16 +286,25 @@ public class MainActivity extends AppCompatActivity {
     // ─── Camera2 open ─────────────────────────────────────────────────────────
     @SuppressLint("MissingPermission")
     private void openCamera() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission hasn't been granted yet (e.g. the request dialog is still
+            // showing on first launch). onRequestPermissionsResult() will retry once
+            // the user responds — attempting to open here would throw SecurityException
+            // after already holding the camera lock, leaking it and breaking the next attempt.
+            return;
+        }
+
         startBackgroundThread();
         CameraManager manager = (CameraManager) getSystemService(CAMERA_SERVICE);
         try {
             String[] idList = manager.getCameraIdList();
             if (idList.length == 0) throw new RuntimeException("No cameras available");
-            
+
             // Search for chosen camera
             cameraId = idList[0];
             int targetFacing = useFrontCamera ? CameraCharacteristics.LENS_FACING_FRONT : CameraCharacteristics.LENS_FACING_BACK;
-            
+
             for (String id : idList) {
                 CameraCharacteristics characteristics = manager.getCameraCharacteristics(id);
                 Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
@@ -307,7 +316,12 @@ public class MainActivity extends AppCompatActivity {
 
             if (!cameraOpenCloseLock.tryAcquire(5000, TimeUnit.MILLISECONDS))
                 throw new RuntimeException("Timeout waiting for camera lock");
-            manager.openCamera(cameraId, stateCallback, backgroundHandler);
+            try {
+                manager.openCamera(cameraId, stateCallback, backgroundHandler);
+            } catch (Exception e) {
+                cameraOpenCloseLock.release();
+                throw e;
+            }
         } catch (Exception e) {
             Log.e(TAG, "openCamera error", e);
             Toast.makeText(this, "Camera error: " + e.getMessage(), Toast.LENGTH_SHORT).show();

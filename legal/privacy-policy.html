@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TrashCam — Politique de confidentialité / Privacy Policy</title>
+<style>
+  :root {
+    --bg: #f6f5f2;
+    --bg-raised: #ffffff;
+    --text: #1b1a18;
+    --text-dim: #6b6862;
+    --border: #ddd9d1;
+    --accent: #e8590c;
+    --accent-ink: #ffffff;
+    --mono-tag: #8a8680;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d0d0d;
+      --bg-raised: #161615;
+      --text: #ededed;
+      --text-dim: #9a9a9a;
+      --border: #2a2a2a;
+      --accent: #ff6b35;
+      --accent-ink: #0d0d0d;
+      --mono-tag: #7a7a7a;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0d0d0d;
+    --bg-raised: #161615;
+    --text: #ededed;
+    --text-dim: #9a9a9a;
+    --border: #2a2a2a;
+    --accent: #ff6b35;
+    --accent-ink: #0d0d0d;
+    --mono-tag: #7a7a7a;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+  }
+
+  .eyebrow {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--mono-tag);
+    margin: 0 0 1.1rem;
+  }
+
+  .eyebrow .dot { color: var(--accent); }
+
+  h1 {
+    font-family: ui-sans-serif, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 700;
+    font-size: clamp(2rem, 5vw, 2.6rem);
+    letter-spacing: -0.01em;
+    line-height: 1.08;
+    margin: 0 0 0.5rem;
+    text-wrap: balance;
+  }
+
+  .meta {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin: 0 0 2.6rem;
+  }
+
+  .meta span + span::before {
+    content: "·";
+    margin: 0 0.5em;
+    color: var(--border);
+  }
+
+  .lang-block {
+    margin-top: 2.8rem;
+  }
+
+  .lang-title {
+    font-family: ui-sans-serif, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin: 0 0 1.6rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  section.clause {
+    margin: 0 0 1.9rem;
+  }
+
+  section.clause h2 {
+    font-family: ui-sans-serif, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 0 0 0.5rem;
+    display: flex;
+    gap: 0.6em;
+    align-items: baseline;
+  }
+
+  section.clause h2 .num {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 0.85rem;
+  }
+
+  section.clause p, section.clause li {
+    color: var(--text);
+    font-size: 1rem;
+    max-width: 62ch;
+  }
+
+  section.clause ul {
+    margin: 0.4rem 0 0.6rem;
+    padding-left: 1.3rem;
+  }
+
+  section.clause li { margin: 0.25rem 0; }
+
+  strong { font-weight: 700; }
+
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.6rem 0 1.6rem;
+  }
+
+  .badge {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    padding: 0.32rem 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-dim);
+    background: var(--bg-raised);
+  }
+
+  .badge.no::before { content: "✕ "; color: var(--accent); }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 3.2rem 0;
+    border: 0;
+  }
+
+  .contact-card {
+    margin-top: 1rem;
+    padding: 1.1rem 1.3rem;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: ui-sans-serif, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 0.95rem;
+  }
+
+  .contact-card a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .contact-card a:hover, .contact-card a:focus-visible { text-decoration: underline; }
+
+  footer {
+    margin-top: 3.5rem;
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    color: var(--mono-tag);
+    letter-spacing: 0.03em;
+  }
+
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 480px) {
+    .page { padding: 3rem 1.2rem 4rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <p class="eyebrow">TrashCam <span class="dot">·</span> App confidentiality / Confidentialité de l'app</p>
+  <h1>Politique de confidentialité<br>Privacy Policy</h1>
+  <p class="meta"><span>com.trashcam</span><span>Version 1.0</span><span>En vigueur / Effective: 14 août 2026</span></p>
+
+  <div class="badge-row">
+    <span class="badge no">No data collected</span>
+    <span class="badge no">No internet access</span>
+    <span class="badge no">No ads / trackers</span>
+    <span class="badge no">No account required</span>
+  </div>
+
+  <!-- ───────────── FRANÇAIS ───────────── -->
+  <div class="lang-block">
+    <h2 class="lang-title">🇫🇷 Français</h2>
+
+    <section class="clause">
+      <h2><span class="num">01</span> Introduction</h2>
+      <p>TrashCam est une application photo/vidéo qui dégrade volontairement la qualité de l'image et du son pour un effet créatif. Cette politique explique quelles autorisations l'application demande et, surtout, ce qu'elle <strong>ne fait pas</strong> avec vos données.</p>
+    </section>
+
+    <section class="clause">
+      <h2><span class="num">02</span> Données et autorisations utilisées</h2>
+      <p>L'application demande les autorisations suivantes, utilisées uniquement le temps de la capture, en local sur l'appareil :</p>
+      <ul>
+        <li><strong>Appareil photo</strong> — pour afficher l'aperçu et prendre des photos/vidéos.</li>
+        <li><strong>Microphone</strong> — pour enregistrer le son des vidéos.</li>
+        <li><strong>Stockage</strong> — pour enregistrer les photos/vidéos dans votre galerie ou un dossier que vous choisissez.</li>
+      </ul>
+    </section>
+
+    <section class="clause">
+      <h2><span class="num">03</span> Aucune collecte, aucune transmission</h2>
+      <p>TrashCam ne dispose d'aucun accès réseau : l'application ne se connecte à aucun serveur, ne contient aucun outil d'analyse, aucune publicité et aucun kit tiers. Aucune donnée personnelle, photo, vidéo ou son n'est jamais transmise, ni à l'éditeur, ni à un tiers.</p>
+    </section>
+
+    <section class="clause">
+      <h2><span class="num">04</span> Où vont vos photos et vidéos</h2>
+      <p>Tout le contenu créé reste sur votre appareil : soit dans la galerie (<code>DCIM/TrashCam</code>), soit dans le dossier que vous avez sélectionné via le sélecteur de dossiers d'Android. L'éditeur n'y a jamais accès.</p>
+    </section>
+
+    <section class="clause">
+      <h2><span class="num">05</span> Enfants</h2>
+      <p>L'application ne cible pas les enfants et ne collecte aucune donnée, quel que soit l'âge de l'utilisateur.</p>
+    </section>
+
+    <section class="clause">
+      <h2><span class="num">06</span> Vos droits</h2>
+      <p>Comme aucune donnée n'est collectée ni stockée par l'éditeur, il n'y a rien à consulter, exporter ou supprimer de notre côté. La désinstallation de l'application supprime ses données locales (préférences, dossier de sauvegarde enregistré).</p>
+    </section>
+
+    <section class="clause">
+      <h2><span class="num">07</span> Modifications</h2>
+      <p>Cette politique peut être mise à jour si l'application évolue. La date en haut de page indique la dernière version.</p>
+    </section>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ───────────── ENGLISH ───────────── -->
+  <div class="lang-block">
+    <h2 class="lang-title">🇬🇧 English</h2>
+
+    <section class="clause">
+      <h2><span class="num">01</span> Introduction</h2>
+      <p>TrashCam is a photo/video app that deliberately degrades image and sound quality for creative effect. This policy explains what permissions the app requests and, more importantly, what it does <strong>not</strong> do with your data.</p>
+    </section>
+
+    <section class="clause">
+      <h2><span class="num">02</span> Data and permissions used</h2>
+      <p>The app requests the following permissions, used only at the moment of capture, entirely on-device:</p>
+      <ul>
+        <li><strong>Camera</strong> — to show the live preview and take photos/videos.</li>
+        <li><strong>Microphone</strong> — to record audio for videos.</li>
+        <li><strong>Storage</strong> — to save photos/videos to your gallery or a folder you choose.</li>
+      </ul>
+    </section>
+
+    <section class="clause">
+      <h2><span class="num">03</span> No collection, no transmission</h2>
+      <p>TrashCam has no network access at all: the app never connects to a server, and contains no analytics, no ads, and no third-party SDKs. No personal data, photo, video, or audio is ever transmitted — not to the developer, not to anyone else.</p>
+    </section>
+
+    <section class="clause">
+      <h2><span class="num">04</span> Where your photos and videos go</h2>
+      <p>Everything you create stays on your device: either in your gallery (<code>DCIM/TrashCam</code>) or in the folder you selected via Android's folder picker. The developer never has access to it.</p>
+    </section>
+
+    <section class="clause">
+      <h2><span class="num">05</span> Children</h2>
+      <p>The app is not directed at children and collects no data regardless of the user's age.</p>
+    </section>
+
+    <section class="clause">
+      <h2><span class="num">06</span> Your rights</h2>
+      <p>Since no data is collected or stored by the developer, there is nothing on our side to view, export, or delete. Uninstalling the app removes its local data (preferences, saved folder location).</p>
+    </section>
+
+    <section class="clause">
+      <h2><span class="num">07</span> Changes</h2>
+      <p>This policy may be updated as the app evolves. The date at the top of the page reflects the latest version.</p>
+    </section>
+
+    <section class="clause">
+      <h2><span class="num">08</span> Contact</h2>
+      <div class="contact-card">
+        Questions about this policy? <a href="mailto:contact@office-works.ch">contact@office-works.ch</a>
+      </div>
+    </section>
+  </div>
+
+  <footer>TrashCam · com.trashcam · Play Store listing document</footer>
+</div>
+
+</body>
+</html>

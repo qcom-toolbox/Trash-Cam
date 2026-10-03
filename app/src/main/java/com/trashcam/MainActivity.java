@@ -36,25 +36,25 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSIONS = 1;
 
     // ─── Trash resolution presets ─────────────────────────────────────────────
-    // Video: [width, height]
-    private static final int[][] VIDEO_PRESETS = {
+    // Shared by photo + video: [width, height]
+    private static final int[][] RES_PRESETS = {
         {4,   4},      // 0 - pure chaos
         {8,   8},      // 1
         {16,  16},     // 2
         {32,  32},     // 3
         {64,  64},     // 4
-        {128, 128}     // 5 - "HD"
+        {128, 128},    // 5 - "HD"
+        {240, 240},    // 6 - "PATHETIC 240px"
+        {256, 256}     // 7
     };
 
-    // Photo uses same
-    private static final int[][] PHOTO_PRESETS = {
-        {4,   4},
-        {8,   8},
-        {16,  16},
-        {32,  32},
-        {64,  64},
-        {128, 128}
-    };
+    // Zoom slider: progress 0..ZOOM_STEPS maps to 1.0x..maxZoom
+    private static final int ZOOM_STEPS = 100;
+
+    private static String resName(int[] r) {
+        if (r[0] == 240 && r[1] == 240) return "PATHETIC 240px";
+        return r[0] + "×" + r[1];
+    }
 
     // Audio sample rates (Hz) - criminally low
     private static final int[] AUDIO_RATES = {
@@ -69,10 +69,10 @@ public class MainActivity extends AppCompatActivity {
     // ─── UI ───────────────────────────────────────────────────────────────────
     private TextureView textureView;
     private ImageView pixelatedOverlay;
-    private SeekBar videoResSeek, audioQualitySeek, photoResSeek;
-    private TextView videoResValue, audioQualityValue, photoResValue;
+    private SeekBar resSeek, audioQualitySeek, zoomSeek;
+    private TextView resValue, audioQualityValue, zoomValue;
     private TextView resLabel, recIndicator;
-    private com.google.android.material.button.MaterialButton btnPhoto, btnRecord, btnFolder, btnFrameDrop, btnSwitchCam;
+    private com.google.android.material.button.MaterialButton btnPhoto, btnRecord, btnFolder, btnFrameDrop, btnSwitchCam, btnZoomLoss;
 
     // ─── Camera2 ──────────────────────────────────────────────────────────────
     private CameraDevice cameraDevice;
@@ -82,14 +82,17 @@ public class MainActivity extends AppCompatActivity {
     private Handler backgroundHandler;
     private final Semaphore cameraOpenCloseLock = new Semaphore(1);
     private String cameraId;
+    private android.graphics.Rect activeArray;
+    private float maxZoom = 1f;
 
     // ─── State ────────────────────────────────────────────────────────────────
-    private int videoResIndex = 0;
+    private int resIndex = 0;
     private int audioRateIndex = 0;
-    private int photoResIndex = 0;
     private boolean isRecording = false;
     private boolean isFrameDropEnabled = false;
     private boolean useFrontCamera = false;
+    private float zoom = 1f;
+    private boolean zoomDegradesQuality = false;
 
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private final Runnable previewUpdateRunnable = new Runnable() {
@@ -104,14 +107,23 @@ public class MainActivity extends AppCompatActivity {
         if (textureView.isAvailable()) {
             Bitmap bmp = textureView.getBitmap();
             if (bmp != null) {
-                // Use video res for preview as it's the most common "crappy" target
-                int[] res = VIDEO_PRESETS[videoResIndex];
+                int[] res = zoomedRes(RES_PRESETS[resIndex]);
                 Bitmap trash = Bitmap.createScaledBitmap(bmp, res[0], res[1], false);
                 pixelatedOverlay.setImageBitmap(trash);
                 // No need to upscale, ImageView scaleType="fitCenter" will do it (pixelated by default if tiny)
                 bmp.recycle();
             }
         }
+    }
+
+    // When "zoom kills quality" is on, zooming in divides the resolution by the zoom
+    // factor (like cheap digital zoom on an old phone). Output size stays the same.
+    private int[] zoomedRes(int[] res) {
+        if (!zoomDegradesQuality || zoom <= 1f) return res;
+        return new int[] {
+            Math.max(1, Math.round(res[0] / zoom)),
+            Math.max(1, Math.round(res[1] / zoom))
+        };
     }
 
     // ─── Recording ────────────────────────────────────────────────────────────
@@ -139,12 +151,13 @@ public class MainActivity extends AppCompatActivity {
     private void bindViews() {
         textureView    = findViewById(R.id.textureView);
         pixelatedOverlay = findViewById(R.id.pixelatedOverlay);
-        videoResSeek   = findViewById(R.id.videoResSeek);
+        resSeek   = findViewById(R.id.resSeek);
         audioQualitySeek = findViewById(R.id.audioQualitySeek);
-        photoResSeek   = findViewById(R.id.photoResSeek);
-        videoResValue  = findViewById(R.id.videoResValue);
+        resValue  = findViewById(R.id.resValue);
         audioQualityValue = findViewById(R.id.audioQualityValue);
-        photoResValue  = findViewById(R.id.photoResValue);
+        zoomSeek       = findViewById(R.id.zoomSeek);
+        zoomValue      = findViewById(R.id.zoomValue);
+        btnZoomLoss    = findViewById(R.id.btnZoomLoss);
         resLabel       = findViewById(R.id.resLabel);
         recIndicator   = findViewById(R.id.recIndicator);
         btnPhoto       = findViewById(R.id.btnPhoto);
@@ -156,12 +169,12 @@ public class MainActivity extends AppCompatActivity {
 
     // ─── Sliders ──────────────────────────────────────────────────────────────
     private void setupSliders() {
-        videoResSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        resSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar sb, int p, boolean user) {
-                videoResIndex = p;
-                int[] r = VIDEO_PRESETS[p];
-                videoResValue.setText(r[0] + "×" + r[1]);
-                resLabel.setText(r[0] + "×" + r[1]);
+                resIndex = p;
+                int[] r = RES_PRESETS[p];
+                resValue.setText(resName(r));
+                resLabel.setText(resName(r));
             }
             public void onStartTrackingTouch(SeekBar sb) {}
             public void onStopTrackingTouch(SeekBar sb) {}
@@ -176,20 +189,50 @@ public class MainActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar sb) {}
         });
 
-        photoResSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        zoomSeek.setMax(ZOOM_STEPS);
+        zoomSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             public void onProgressChanged(SeekBar sb, int p, boolean user) {
-                photoResIndex = p;
-                int[] r = PHOTO_PRESETS[p];
-                photoResValue.setText(r[0] + "×" + r[1]);
+                if (user) setZoom(1f + (maxZoom - 1f) * p / ZOOM_STEPS);
             }
             public void onStartTrackingTouch(SeekBar sb) {}
             public void onStopTrackingTouch(SeekBar sb) {}
         });
 
         // Init labels
-        videoResValue.setText("4×4");
+        resValue.setText("4×4");
         audioQualityValue.setText("200 Hz");
-        photoResValue.setText("4×4");
+        zoomValue.setText("1.0×");
+    }
+
+    // ─── Zoom ─────────────────────────────────────────────────────────────────
+    private void setZoom(float z) {
+        zoom = Math.max(1f, Math.min(maxZoom, z));
+        zoomValue.setText(String.format(Locale.US, "%.1f×", zoom));
+        if (maxZoom > 1f) zoomSeek.setProgress(Math.round((zoom - 1f) / (maxZoom - 1f) * ZOOM_STEPS));
+        applyZoom();
+    }
+
+    private void applyZoom() {
+        if (activeArray == null || previewRequestBuilder == null || captureSession == null) return;
+        int cw = Math.round(activeArray.width() / zoom);
+        int ch = Math.round(activeArray.height() / zoom);
+        int cx = activeArray.left + (activeArray.width() - cw) / 2;
+        int cy = activeArray.top + (activeArray.height() - ch) / 2;
+        previewRequestBuilder.set(CaptureRequest.SCALER_CROP_REGION,
+                new android.graphics.Rect(cx, cy, cx + cw, cy + ch));
+        try {
+            captureSession.setRepeatingRequest(previewRequestBuilder.build(), null, backgroundHandler);
+        } catch (Exception e) {
+            Log.e(TAG, "zoom error", e);
+        }
+    }
+
+    private void toggleZoomLoss() {
+        zoomDegradesQuality = !zoomDegradesQuality;
+        int color = zoomDegradesQuality ? 0xFFFF3333 : 0xFF888888;
+        btnZoomLoss.setText(zoomDegradesQuality ? "ON" : "OFF");
+        btnZoomLoss.setStrokeColor(android.content.res.ColorStateList.valueOf(color));
+        btnZoomLoss.setTextColor(color);
     }
 
     // ─── Buttons ──────────────────────────────────────────────────────────────
@@ -202,6 +245,18 @@ public class MainActivity extends AppCompatActivity {
         btnFolder.setOnClickListener(v -> chooseFolder());
         btnFrameDrop.setOnClickListener(v -> toggleFrameDrop());
         btnSwitchCam.setOnClickListener(v -> switchCamera());
+        btnZoomLoss.setOnClickListener(v -> toggleZoomLoss());
+
+        // Pinch the preview to zoom
+        ScaleGestureDetector pinch = new ScaleGestureDetector(this,
+            new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                @Override
+                public boolean onScale(@NonNull ScaleGestureDetector d) {
+                    setZoom(zoom * d.getScaleFactor());
+                    return true;
+                }
+            });
+        pixelatedOverlay.setOnTouchListener((v, e) -> pinch.onTouchEvent(e));
     }
 
     private void switchCamera() {
@@ -314,6 +369,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+            CameraCharacteristics chosen = manager.getCameraCharacteristics(cameraId);
+            activeArray = chosen.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+            Float mz = chosen.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
+            maxZoom = (mz != null && mz > 1f) ? mz : 1f;
+            zoom = Math.min(zoom, maxZoom);
+            final float z = zoom;
+            runOnUiThread(() -> setZoom(z));
+
             if (!cameraOpenCloseLock.tryAcquire(5000, TimeUnit.MILLISECONDS))
                 throw new RuntimeException("Timeout waiting for camera lock");
             try {
@@ -371,6 +434,7 @@ public class MainActivity extends AppCompatActivity {
                         } catch (CameraAccessException e) {
                             Log.e(TAG, "preview session error", e);
                         }
+                        applyZoom();
                     }
                     public void onConfigureFailed(@NonNull CameraCaptureSession session) {
                         Toast.makeText(MainActivity.this, "Camera config failed", Toast.LENGTH_SHORT).show();
@@ -388,10 +452,14 @@ public class MainActivity extends AppCompatActivity {
         Bitmap preview = textureView.getBitmap();
         if (preview == null) { Toast.makeText(this, "No preview", Toast.LENGTH_SHORT).show(); return; }
 
-        int[] res = PHOTO_PRESETS[photoResIndex];
+        int[] res = RES_PRESETS[resIndex];
         int tw = res[0], th = res[1];
+        int[] eff = zoomedRes(res);
 
-        Bitmap trash = Bitmap.createScaledBitmap(preview, tw, th, false);
+        // Downscale to the (possibly zoom-degraded) res, then blow back up to the
+        // preset size with nearest-neighbour so the file is still tw×th
+        Bitmap small = Bitmap.createScaledBitmap(preview, eff[0], eff[1], false);
+        Bitmap trash = Bitmap.createScaledBitmap(small, tw, th, false);
 
         new Thread(() -> {
             try {
@@ -476,8 +544,8 @@ public class MainActivity extends AppCompatActivity {
             final File finalMuxFile = tempFile;
             MediaMuxer muxer = new MediaMuxer(finalMuxFile.getAbsolutePath(), MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
 
-            // ─── Video Encoder Setup (176x144 QCIF is safe and crappy) ───────
-            int videoW = 176, videoH = 144;
+            // ─── Video Encoder Setup (256x256 fits the biggest preset) ───────
+            int videoW = 256, videoH = 256;
             MediaFormat vFormat = MediaFormat.createVideoFormat(MediaFormat.MIMETYPE_VIDEO_AVC, videoW, videoH);
             vFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar);
             vFormat.setInteger(MediaFormat.KEY_BIT_RATE, 256000);
@@ -570,7 +638,7 @@ public class MainActivity extends AppCompatActivity {
                 Bitmap frame = textureView.getBitmap();
                 if (frame != null) {
                     // Double scale for trash look (Dynamic resolution)
-                    int[] currentRes = VIDEO_PRESETS[videoResIndex];
+                    int[] currentRes = zoomedRes(RES_PRESETS[resIndex]);
                     int tw = currentRes[0];
                     int th = currentRes[1];
 

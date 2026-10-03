@@ -75,7 +75,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Video resolution row -->
+        <!-- Resolution row (photo + video) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -87,28 +87,28 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="VIDEO RES"
+                android:text="RES"
                 android:textColor="@color/text_secondary"
                 android:textSize="10sp"
                 android:fontFamily="monospace"/>
 
             <TextView
-                android:id="@+id/videoResValue"
+                android:id="@+id/resValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="4×3"
                 android:textColor="@color/accent"
                 android:textSize="12sp"
                 android:fontFamily="monospace"
-                android:minWidth="80dp"
+                android:minWidth="110dp"
                 android:gravity="center"/>
 
             <SeekBar
-                android:id="@+id/videoResSeek"
+                android:id="@+id/resSeek"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:max="5"
+                android:max="7"
                 android:progress="0"
                 android:progressTint="@color/accent"
                 android:thumbTint="@color/accent"/>
@@ -139,7 +139,7 @@
                 android:textColor="@color/accent"
                 android:textSize="12sp"
                 android:fontFamily="monospace"
-                android:minWidth="80dp"
+                android:minWidth="110dp"
                 android:gravity="center"/>
 
             <SeekBar
@@ -153,7 +153,7 @@
                 android:thumbTint="@color/accent"/>
         </LinearLayout>
 
-        <!-- Photo quality row -->
+        <!-- Zoom row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -165,31 +165,64 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="PHOTO RES"
+                android:text="ZOOM"
                 android:textColor="@color/text_secondary"
                 android:textSize="10sp"
                 android:fontFamily="monospace"/>
 
             <TextView
-                android:id="@+id/photoResValue"
+                android:id="@+id/zoomValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="4×4"
+                android:text="1.0×"
                 android:textColor="@color/accent"
                 android:textSize="12sp"
                 android:fontFamily="monospace"
-                android:minWidth="80dp"
+                android:minWidth="56dp"
                 android:gravity="center"/>
 
             <SeekBar
-                android:id="@+id/photoResSeek"
+                android:id="@+id/zoomSeek"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:max="5"
+                android:max="100"
                 android:progress="0"
                 android:progressTint="@color/accent"
                 android:thumbTint="@color/accent"/>
+        </LinearLayout>
+
+        <!-- Zoom kills quality row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="ZOOM KILLS QUALITY"
+                android:textColor="@color/text_secondary"
+                android:textSize="10sp"
+                android:fontFamily="monospace"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnZoomLoss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OFF"
+                android:textSize="10sp"
+                android:fontFamily="monospace"
+                android:textColor="@color/text_secondary"
+                android:backgroundTint="@color/surface"
+                android:strokeColor="@color/text_secondary"
+                app:strokeWidth="1dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:minHeight="32dp"
+                android:padding="0dp"/>
         </LinearLayout>
 
         <!-- Frame drop row -->
